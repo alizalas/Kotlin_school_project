@@ -1,0 +1,15 @@
+spring:
+  config:
+    activate:
+      on-profile: dev
+  datasource:
+    driver-class-name: org.postgresql.Driver
+    url: jdbc:postgresql://localhost:5432/mydatabase
+    username: myusername
+    password: mypassword
+  jpa:
+    hibernate:
+      ddl-auto: validate  # Проверка структуры БД без изменений
+    properties:
+      hibernate:
+        dialect: org.hibernate.dialect.PostgreSQLDialect

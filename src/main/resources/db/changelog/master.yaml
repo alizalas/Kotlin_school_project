@@ -1,0 +1,4 @@
+databaseChangeLog:
+  - include:
+      file: db/changelog/version-1/001-create-tables.yml
+      relativeToChangelogFile: true
