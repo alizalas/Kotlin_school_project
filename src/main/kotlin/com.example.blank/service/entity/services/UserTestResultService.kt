@@ -118,6 +118,5 @@ class UserTestResultService(
 //        return userTestResultRepository.save(userTestResult)
 //    }
 }
-
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class UserTestResultNotFoundException(message: String) : RuntimeException(message)

@@ -133,6 +133,5 @@ class TopicService(
         return topicRepository.save(topic)
     }
 }
-
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class TopicNotFoundException(message: String) : RuntimeException(message)

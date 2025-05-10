@@ -38,7 +38,4 @@ class GeneralControllerAdvice {
         logger.warn(exception.message ?: "BAD REQUEST")
         return ResponseEntity.status(400).body(ErrorResponse(exception.message ?: "BAD REQUEST"))
     }
-
-
-
 }

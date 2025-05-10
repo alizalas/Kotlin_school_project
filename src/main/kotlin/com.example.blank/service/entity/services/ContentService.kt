@@ -135,6 +135,5 @@ class ContentService(
         return contentRepository.save(content)
     }
 }
-
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class ContentNotFoundException(message: String) : RuntimeException(message)

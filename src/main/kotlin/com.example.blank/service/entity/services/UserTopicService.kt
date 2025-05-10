@@ -63,6 +63,5 @@ class UserTopicService(
     }
 
 }
-
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class UserTopicNotFoundException(message: String) : RuntimeException(message)

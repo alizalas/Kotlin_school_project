@@ -114,6 +114,5 @@ class ActivityLogService(
         }
     }
 }
-
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class ActivityLogNotFoundException(message: String) : RuntimeException(message)

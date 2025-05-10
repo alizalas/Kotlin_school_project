@@ -161,6 +161,5 @@ class TestService(
         return testRepository.save(test)
     }
 }
-
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class TestNotFoundException(message: String) : RuntimeException(message)

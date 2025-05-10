@@ -174,6 +174,5 @@ class UserService(
     }
 
 }
-
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class UserNotFoundException(message: String) : RuntimeException(message)
