@@ -1,4 +1,4 @@
-package com.example.blank.dto.requests
+package com.example.blank.requests
 
 data class RegisterUserRequest (
     val username: String,

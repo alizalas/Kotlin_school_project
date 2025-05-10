@@ -1,4 +1,4 @@
-package com.example.blank.dto.responses
+package com.example.blank.responses
 
 data class LoginResponse (
     val token: String
