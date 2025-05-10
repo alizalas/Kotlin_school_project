@@ -9,13 +9,16 @@ import com.example.blank.entity.updateTimestamp
 import com.example.blank.dto.toEntity
 import com.example.blank.repository.UserTestResultRepository
 import com.example.blank.entity.UserTestResultEntity
+import org.slf4j.LoggerFactory
 
 @Service
 class UserTestResultService(
     private val userTestResultRepository: UserTestResultRepository
 ) {
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     fun addUserTestResult(userTestResult: UserTestResultDto) {
+        logger.info("Запрос на добаление результата $userTestResult")
         userTestResultRepository.save(userTestResult.toEntity())
     }
 
@@ -25,26 +28,31 @@ class UserTestResultService(
 //    }
 
     fun getUserTestResultById(userTestResultId: Long): UserTestResultEntity {
+        logger.info("Запрос на получение результата $userTestResultId по тесту пользователя")
         return userTestResultRepository.findById(userTestResultId)
             .orElseThrow { UserTestResultNotFoundException("User test result with id $userTestResultId not found") }
     }
 
     fun getAllUserTestResultsByUserId(userId: Long): List<UserTestResultEntity> {
+        logger.info("Запрос на получение всех результатов пользователя по Id: $userId")
         return userTestResultRepository.findAllByUserId(userId)
             ?: throw UserTestResultNotFoundException("No test results found for user with id $userId")
     }
 
     fun getAllUserTestResultsByTestId(testId: Int): List<UserTestResultEntity> {
+        logger.info("Запрос на получение результатов всех пользователей по TestId:  $testId")
         return userTestResultRepository.findAllByTestId(testId)
             ?: throw UserTestResultNotFoundException("No test results found for test with id $testId")
     }
 
     fun getUserTestResultByUserIdAndTestId(userId: Long, testId: Int): UserTestResultEntity {
+        logger.info("Запрос на получение результата по тесту $testId пользователя с Id: $userId")
         return userTestResultRepository.findByUserIdAndTestId(userId, testId)
             ?: throw UserTestResultNotFoundException("No test result found for user $userId and test $testId")
     }
 
     fun getAllUserTestResultsByTestIdAndScore(testId: Int, score: Int): List<UserTestResultEntity> {
+        logger.info("Запрос на получение результатов всех пользователей по тесту $testId и само количество очков: $score")
         return userTestResultRepository.findAllByTestIdAndScore(testId, score)
             ?: throw UserTestResultNotFoundException("No test results found for test $testId with score $score")
     }
@@ -58,7 +66,8 @@ class UserTestResultService(
 //    }
 
     @Transactional
-    fun deleteUserTestResultById(userTestResultId: Long): Boolean {
+    fun deleteUserTestResultById(userTestResultId: Long, userId: Int): Boolean {
+        logger.info("Запрос на удаление результата теста $userTestResultId пользователя $userId")
         return if (userTestResultRepository.existsById(userTestResultId)) {
             userTestResultRepository.deleteById(userTestResultId)
             true
@@ -78,7 +87,10 @@ class UserTestResultService(
 //        return userTestResultRepository.save(userTestResult)
 //    }
 
-    fun updateUserTestResultResult(userTestResultId: Long, newScore: Int, newTime: Float): UserTestResultEntity {
+    fun updateUserTestResultResult(userTestResultId: Long, newScore: Int, newTime: Float    ): UserTestResultEntity {
+        logger.info("Запрос на обновление результата пользователя с результатом $newScore и временем $newTime в TestResultId: $userTestResultId")
+        val i = getUserTestResultById(userTestResultId);
+
         val userTestResult = userTestResultRepository.findById(userTestResultId)
             .orElseThrow { UserTestResultNotFoundException("User test result with id $userTestResultId not found") }
         userTestResult.score = newScore

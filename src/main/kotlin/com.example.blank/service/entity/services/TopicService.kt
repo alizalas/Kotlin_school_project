@@ -9,13 +9,16 @@ import com.example.blank.dto.toEntity
 import com.example.blank.repository.TopicRepository
 import com.example.blank.entity.TopicEntity
 import com.example.blank.entity.updateTimestamp
+import org.slf4j.LoggerFactory
 
 @Service
 class TopicService(
     private val topicRepository: TopicRepository
 ) {
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     fun addTopic(topic: TopicDto) {
+        logger.info("Запрос на добавление темы: $topic")
         topicRepository.save(topic.toEntity())
     }
 
@@ -24,15 +27,18 @@ class TopicService(
 //    }
 
     fun getTopicByTopicId(topicId: Long): TopicEntity {
+        logger.info("Запрос на получение темы по id: $topicId")
         return topicRepository.findById(topicId)
             .orElseThrow { TopicNotFoundException("Topic with topicId $topicId not found") }
     }
 
     fun getTopicByName(name: String): TopicEntity {
+        logger.info("Запрос на получение темы по имени: $name")
         return topicRepository.findByName(name) ?: throw TopicNotFoundException("Topic with name $name not found")
     }
 
     fun getAllTopicsByCreatedBy(createdBy: String): List<TopicEntity> {
+        logger.info("Запрос на получение тем, созданных пользователем: $createdBy")
         return topicRepository.findAllByCreatedBy(createdBy) ?: throw TopicNotFoundException("No topics created by $createdBy found")
     }
 
@@ -45,6 +51,7 @@ class TopicService(
 
     @Transactional
     fun deleteTopicByTopicId(topicId: Long): Boolean {
+        logger.info("Запрос на удаление темы по id: ${topicId}")
         return if (topicRepository.existsById(topicId)) {
             topicRepository.deleteById(topicId)
             true

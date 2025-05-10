@@ -9,11 +9,14 @@ import com.example.blank.dto.toEntity
 import com.example.blank.repository.TestRepository
 import com.example.blank.entity.TestEntity
 import com.example.blank.entity.updateTimestamp
+import org.slf4j.LoggerFactory
+
 
 @Service
 class TestService(
     private val testRepository: TestRepository
 ) {
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     fun addTest(test: TestDto) {
         testRepository.save(test.toEntity())
@@ -24,15 +27,18 @@ class TestService(
 //    }
 
     fun getTestByTestId(testId: Long): TestEntity {
+        logger.info("Запрос на получение теста Id:${testId}")
         return testRepository.findById(testId)
             .orElseThrow { TestNotFoundException("Test with testId $testId not found") }
     }
 
     fun getAllTestsByContentType(contentType: String): List<TestEntity> {
+        logger.info("Запрос на получение тестов по типу Type:${contentType}")
         return testRepository.findAllByContentType(contentType) ?: throw TestNotFoundException("No tests with contentType $contentType found")
     }
 
     fun getAllTestsByDifficulty(difficulty: String): List<TestEntity> {
+        logger.info("Запрос на получение тестов по сложности Diff:${difficulty}")
         return testRepository.findAllByDifficulty(difficulty) ?: throw TestNotFoundException("No tests with difficulty $difficulty found")
     }
 
@@ -45,6 +51,7 @@ class TestService(
 
     @Transactional
     fun deleteTestByTestId(testId: Long): Boolean {
+        logger.info("Запрос на удаление теста Id:${testId}")
         return if (testRepository.existsById(testId)) {
             testRepository.deleteById(testId)
             true
@@ -67,6 +74,7 @@ class TestService(
 
     @Transactional
     fun deleteAllTestByContentType(contentType: String): Boolean {
+        logger.info("Запрос на удаление тестов по типу Type:${contentType}")
         return if (testRepository.existsByContentType(contentType)) {
             testRepository.deleteAllByContentType(contentType)
             true
@@ -89,6 +97,7 @@ class TestService(
 
     @Transactional
     fun deleteAllTestByDifficulty(difficulty: String): Boolean {
+        logger.info("Запрос на удаление теста по сложности ${difficulty}")
         return if (testRepository.existsByDifficulty(difficulty)) {
             testRepository.deleteAllByDifficulty(difficulty)
             true
@@ -107,6 +116,7 @@ class TestService(
 
     @Transactional
     fun updateTestDifficulty(testId: Long, newDifficulty: String): TestEntity {
+        logger.info("Запрос на обновление сложности теста с id {testId} на {newDifficulty}")
         val test = testRepository.findById(testId)
             .orElseThrow { TestNotFoundException("Test with testId $testId not found") }
         test.difficulty = newDifficulty
@@ -124,6 +134,7 @@ class TestService(
 
     @Transactional
     fun updateTestQuestions(testId: Long, newQuestions: String): TestEntity {
+        logger.info("Запрос на обновление вопросов теста:  Id:${testId}, Questions:${newQuestions}")
         val test = testRepository.findById(testId)
             .orElseThrow { TestNotFoundException("Test with testId $testId not found") }
         test.questions = newQuestions
@@ -142,6 +153,7 @@ class TestService(
 
     @Transactional
     fun updateTestAnswers(testId: Long, newAnswers: String): TestEntity {
+        logger.info("Запрос на обновление ответов теста  Id:${testId}, Answers:${newAnswers}")
         val test = testRepository.findById(testId)
             .orElseThrow { TestNotFoundException("Test with testId $testId not found") }
         test.answers = newAnswers

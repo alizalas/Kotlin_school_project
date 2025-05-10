@@ -4,10 +4,10 @@ import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import com.example.blank.dto.responses.LoginResponse
-import com.example.blank.dto.requests.RegisterUserRequest
-import com.example.blank.dto.requests.LoginUserRequest
-import com.example.blank.dto.responses.ServiceResponse
+import com.example.blank.responses.LoginResponse
+import com.example.blank.requests.RegisterUserRequest
+import com.example.blank.requests.LoginUserRequest
+import com.example.blank.responses.ServiceResponse
 import com.example.blank.service.userstory.services.AuthorizationService
 
 @RestController

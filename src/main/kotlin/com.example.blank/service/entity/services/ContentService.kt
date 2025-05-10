@@ -9,14 +9,17 @@ import com.example.blank.entity.updateTimestamp
 import com.example.blank.dto.toEntity
 import com.example.blank.repository.ContentRepository
 import com.example.blank.entity.ContentEntity
+import org.slf4j.LoggerFactory
 
 @Service
 class ContentService(
     private val contentRepository: ContentRepository
 ) {
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     fun addContent(content: ContentDto) {
         contentRepository.save(content.toEntity())
+        logger.info("Запрос на добавление контента ${content}")
     }
 
 //    fun getContentByContentId(contentId: Long): ContentEntity {
@@ -24,6 +27,7 @@ class ContentService(
 //    }
 
     fun getContentByContentId(contentId: Long): ContentEntity {
+        logger.info("Запрос на получение контента по Id:${contentId}")
         return contentRepository.findById(contentId)
             .orElseThrow { ContentNotFoundException("Content with contentId $contentId not found") }
     }
@@ -33,10 +37,12 @@ class ContentService(
 //    }
 
     fun getAllContentByTopicId(topicId: Long): List<ContentEntity> {
+        logger.info("Запрос на получение всего контента по TopicId:${topicId}")
         return contentRepository.findAllByTopicId(topicId) ?: throw ContentNotFoundException("Content with topicId $topicId not found")
     }
 
     fun getAllContentByType(type: String): List<ContentEntity> {
+        logger.info("Запрос на получение всего контента по Type:${type}")
         return contentRepository.findAllByType(type) ?: throw ContentNotFoundException("No content with type $type found")
     }
 
@@ -49,6 +55,7 @@ class ContentService(
 
     @Transactional
     fun deleteContentByContentId(contentId: Long): Boolean {
+        logger.info("Запрос на удаление контента по ContentId:${contentId}")
         return if (contentRepository.existsById(contentId)) {
             contentRepository.deleteById(contentId)
             true
@@ -66,6 +73,7 @@ class ContentService(
 
     @Transactional
     fun deleteAllContentByTopicId(topicId: Long): Boolean {
+        logger.info("Запрос на удаление всего контента по TopicId:${topicId}")
         return if (contentRepository.existsByTopicId(topicId)) {
             contentRepository.deleteAllByTopicId(topicId)
             true
@@ -82,6 +90,7 @@ class ContentService(
 
     @Transactional
     fun deleteAllContentByType(type: String): Boolean {
+        logger.info("Запрос на удаление всего контента по Type:${type}")
         return if (contentRepository.existsByType(type)) {
             contentRepository.deleteAllByType(type)
             true
@@ -100,6 +109,7 @@ class ContentService(
 
     @Transactional
     fun updateContentType(contentId: Long, newType: String): ContentEntity {
+        logger.info("Запрос на обновление всего контента по Type:${contentId}")
         val content = contentRepository.findById(contentId)
             .orElseThrow { ContentNotFoundException("Content with contentId $contentId not found") }
         content.type = newType
@@ -117,6 +127,7 @@ class ContentService(
 
     @Transactional
     fun updateContentData(contentId: Long, newData: String): ContentEntity {
+        logger.info("Запрос на обновление даты контента по contentId:${contentId}")
         val content = contentRepository.findById(contentId)
             .orElseThrow { ContentNotFoundException("Content with contentId $contentId not found") }
         content.contentData = newData

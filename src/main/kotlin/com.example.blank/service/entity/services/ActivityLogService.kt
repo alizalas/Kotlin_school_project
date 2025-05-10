@@ -9,14 +9,19 @@ import com.example.blank.dto.toEntity
 import com.example.blank.repository.ActivityLogRepository
 import com.example.blank.entity.ActivityLogEntity
 import java.time.LocalDateTime
+import org.slf4j.LoggerFactory
 
 @Service
 class ActivityLogService(
     private val activityLogRepository: ActivityLogRepository
 ) {
+    private val logger = LoggerFactory.getLogger(this::class.java)
 
     fun addActivityLog(activityLog: ActivityLogDto) {
+        logger.info("Запрос на добавление журнала действий по Id:${activityLog}")
         activityLogRepository.save(activityLog.toEntity())
+
+
     }
 
 //    fun getActivityLogById(activityLogId: Long): ActivityLogEntity {
@@ -24,15 +29,18 @@ class ActivityLogService(
 //    }
 
     fun getActivityLogById(activityLogId: Long): ActivityLogEntity {
+        logger.info("Запрос на получение журнала действий по Id:${activityLogId}")
         return activityLogRepository.findById(activityLogId)
             .orElseThrow { ActivityLogNotFoundException("Activity log with id $activityLogId not found") }
     }
 
     fun getAllActivityLogsByUserId(userId: Long): List<ActivityLogEntity> {
+        logger.info("Запрос на получение журнала действий по UserId${userId}")
         return activityLogRepository.findAllByUserId(userId) ?: throw ActivityLogNotFoundException("Activity logs for user with id $userId not found")
     }
 
     fun getAllActivityLogsByAction(action: String): List<ActivityLogEntity> {
+        logger.info("Запрос на получение всех логов по действию ${action}")
         return activityLogRepository.findAllByAction(action) ?: throw ActivityLogNotFoundException("Activity logs with action $action not found")
     }
 
@@ -45,6 +53,7 @@ class ActivityLogService(
 
     @Transactional
     fun deleteActivityLogById(activityLogId: Long): Boolean {
+        logger.info("Запрос на удаление всех логов по Id: ${activityLogId}")
         return if (activityLogRepository.existsById(activityLogId)) {
             activityLogRepository.deleteById(activityLogId)
             true
@@ -62,6 +71,7 @@ class ActivityLogService(
 
     @Transactional
     fun deleteAllActivityLogsByUserId(userId: Long): Boolean {
+        logger.info("Запрос на удаление всех логов по UserId: ${userId}")
         return if (activityLogRepository.existsByUserId(userId)) {
             activityLogRepository.deleteAllByUserId(userId)
             true
@@ -78,6 +88,7 @@ class ActivityLogService(
 
     @Transactional
     fun deleteAllActivityLogsByAction(action: String): Boolean {
+        logger.info("Запрос на удаление всех логов по действию ${action}")
         return if (activityLogRepository.existsByAction(action)) {
             activityLogRepository.deleteAllByAction(action)
             true
@@ -94,6 +105,7 @@ class ActivityLogService(
 
     @Transactional
     fun deleteAllActivityLogsOlderThan(date: LocalDateTime): Boolean {
+        logger.info("Запрос на удаление всех логов старше чем ${date}")
         return if (activityLogRepository.existsByCreatedAtBefore(date)) {
             activityLogRepository.deleteAllByCreatedAtBefore(date)
             true
