@@ -8,13 +8,15 @@ import com.example.blank.dto.UserTopicDto
 import com.example.blank.dto.toEntity
 import com.example.blank.repository.UserTopicRepository
 import com.example.blank.entity.UserTopicEntity
+import org.slf4j.LoggerFactory
 
 @Service
 class UserTopicService(
     private val userTopicRepository: UserTopicRepository
 ) {
-
+    private val logger = LoggerFactory.getLogger(this::class.java)
     fun addUserTopic(userTopic: UserTopicDto) {
+        logger.info("Запрос на добавление темы $userTopic")
         userTopicRepository.save(userTopic.toEntity())
     }
 
@@ -24,16 +26,19 @@ class UserTopicService(
 //    }
 
     fun getUserTopicById(userTopicId: Long): UserTopicEntity {
+        logger.info("Запрос на получение темы по Id:$userTopicId")
         return userTopicRepository.findById(userTopicId)
             .orElseThrow { UserTopicNotFoundException("User topic with id $userTopicId not found") }
     }
 
     fun getAllUserTopicsByUserId(userId: Long): List<UserTopicEntity> {
+        logger.info("Запрос на получение тем пользователя по Id:$userId")
         return userTopicRepository.findAllByUserId(userId)
             ?: throw UserTopicNotFoundException("No topics found for user with id $userId")
     }
 
     fun getAllUserTopicsByTopicId(topicId: Int): List<UserTopicEntity> {
+        logger.info("Запрос на получение всех пользователей по теме с Id:$topicId")
         return userTopicRepository.findAllByTopicId(topicId)
             ?: throw UserTopicNotFoundException("No users found for topic id $topicId")
     }
@@ -48,6 +53,7 @@ class UserTopicService(
 
     @Transactional
     fun deleteUserTopicById(userTopicId: Long): Boolean {
+        logger.info("Запрос на удаление темы по Id:$userTopicId")
         return if (userTopicRepository.existsById(userTopicId)) {
             userTopicRepository.deleteById(userTopicId)
             true
@@ -57,6 +63,5 @@ class UserTopicService(
     }
 
 }
-
 @ResponseStatus(HttpStatus.NOT_FOUND)
 class UserTopicNotFoundException(message: String) : RuntimeException(message)
