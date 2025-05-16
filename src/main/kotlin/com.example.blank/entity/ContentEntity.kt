@@ -6,7 +6,7 @@ import java.time.LocalDateTime
 
 @Entity
 @Table(
-    name = "contents",
+    name = "content",
     indexes = [
         Index(columnList = "id", name = "content_id_hidx"),
         Index(columnList = "topic_id", name = "topic_id_hidx")

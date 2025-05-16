@@ -4,7 +4,7 @@ databaseChangeLog:
       author: your.name
       changes:
         - createTable:
-            tableName: Users
+            tableName: users
             columns:
               - column:
                   name: id
@@ -44,7 +44,7 @@ databaseChangeLog:
                   defaultValueComputed: CURRENT_TIMESTAMP
 
         - createTable:
-            tableName: Topics
+            tableName: topics
             columns:
               - column:
                   name: id
@@ -74,7 +74,7 @@ databaseChangeLog:
                   defaultValueComputed: CURRENT_TIMESTAMP
 
         - createTable:
-            tableName: User_Topics
+            tableName: user_topics
             columns:
               - column:
                   name: id
@@ -87,7 +87,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     foreignKeyName: fk_user_topics_users
-                    referencedTableName: Users
+                    referencedTableName: users
                     referencedColumnNames: id
                     onDelete: CASCADE
               - column:
@@ -96,7 +96,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     foreignKeyName: fk_user_topics_topics
-                    referencedTableName: Topics
+                    referencedTableName: topics
                     referencedColumnNames: id
                     onDelete: CASCADE
               - column:
@@ -105,7 +105,7 @@ databaseChangeLog:
                   defaultValueComputed: CURRENT_TIMESTAMP
 
         - createTable:
-            tableName: Content
+            tableName: content
             columns:
               - column:
                   name: id
@@ -118,7 +118,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     foreignKeyName: fk_content_topics
-                    referencedTableName: Topics
+                    referencedTableName: topics
                     referencedColumnNames: id
                     onDelete: CASCADE
               - column:
@@ -141,7 +141,7 @@ databaseChangeLog:
                   defaultValueComputed: CURRENT_TIMESTAMP
 
         - createTable:
-            tableName: Tests
+            tableName: tests
             columns:
               - column:
                   name: id
@@ -172,7 +172,7 @@ databaseChangeLog:
                   defaultValueComputed: CURRENT_TIMESTAMP
 
         - createTable:
-            tableName: User_Test_Results
+            tableName: user_test_results
             columns:
               - column:
                   name: id
@@ -185,7 +185,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     foreignKeyName: fk_user_test_results_users
-                    referencedTableName: Users
+                    referencedTableName: users
                     referencedColumnNames: id
                     onDelete: CASCADE
               - column:
@@ -194,7 +194,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     foreignKeyName: fk_user_test_results_tests
-                    referencedTableName: Tests
+                    referencedTableName: tests
                     referencedColumnNames: id
                     onDelete: CASCADE
               - column:
@@ -216,7 +216,7 @@ databaseChangeLog:
                   defaultValueComputed: CURRENT_TIMESTAMP
 
         - createTable:
-            tableName: Activity_Log
+            tableName: activity_log
             columns:
               - column:
                   name: id
@@ -229,7 +229,7 @@ databaseChangeLog:
                   constraints:
                     nullable: false
                     foreignKeyName: fk_activity_log_users
-                    referencedTableName: Users
+                    referencedTableName: users
                     referencedColumnNames: id
                     onDelete: CASCADE
               - column:
@@ -244,3 +244,71 @@ databaseChangeLog:
                   name: created_at
                   type: TIMESTAMP
                   defaultValueComputed: CURRENT_TIMESTAMP
+
+        - createTable:
+            tableName: tokens
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: value
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: user_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    foreignKeyName: fk_tokens_user
+                    references: users(id)
+                    deleteCascade: true
+              - column:
+                  name: expires_at
+                  type: TIMESTAMP
+              - column:
+                  name: revoked
+                  type: BOOLEAN
+                  defaultValue: false
+
+        - createTable:
+            tableName: users_authorization
+            columns:
+              - column:
+                  name: id
+                  type: BIGSERIAL
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: username
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: password
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: telegram_id
+                  type: BIGINT
+                  constraints:
+                    nullable: false
+                    unique: true
+              - column:
+                  name: full_name
+                  type: VARCHAR(255)
+                  constraints:
+                    nullable: true
+              - column:
+                  name: profile_data
+                  type: JSONB  # Для PostgreSQL
+                  constraints:
+                    nullable: true
