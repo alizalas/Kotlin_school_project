@@ -1,0 +1,139 @@
+@startuml Общая архитектура системы
+!theme plain
+skinparam {
+  ArrowColor #0078D7
+  ActorBorderColor #5F5F5F
+  ParticipantBackgroundColor #F5F5F5
+  SequenceMessageAlignment reverse
+}
+
+actor Пользователь
+participant "Telegram Бот" as Bot
+participant "Сервер (Kotlin)" as Server
+database "PostgreSQL" as DB
+participant "Внешнее API" as API
+actor "Администратор" as Admin
+
+' ===== Группа регистрации =====
+group US-001: Регистрация (Пользователь -> Бот -> Сервер -> БД)
+  Пользователь -> Bot: /start
+  Bot -> Server: register_user(telegram_id, username)
+  Server -> DB: INSERT INTO Users
+  DB --> Server: ID нового пользователя
+  Server --> Bot: Подтверждение регистрации
+  Bot -> Пользователь: Меню выбора тем
+end
+
+group US-002: Редактирование профиля
+  Пользователь -> Bot: /profile_edit
+  Bot -> Пользователь: Запрос дополнительных данных
+  Пользователь -> Bot: Отправка данных (интересы, уровень)
+  Bot -> Server: update_profile(telegram_id, json_data)
+  Server -> DB: UPDATE Users SET profile_data
+  DB --> Server: OK
+  Server --> Bot: Профиль обновлен
+  Bot -> Пользователь: Подтверждение
+end
+
+' ===== Группа работы с темами =====
+group US-010: Просмотр тем
+  Пользователь -> Bot: /topics
+  Bot -> Server: get_available_topics()
+  Server -> DB: SELECT * FROM Topics
+  DB --> Server: Список тем
+  Server --> Bot: Форматированный список
+  Bot -> Пользователь: Inline-кнопки с темами
+end
+
+group US-011: Предложить тему (для продвинутых)
+  Пользователь -> Bot: /suggest_topic
+  Bot -> Пользователь: Введите название темы
+  Пользователь -> Bot: Название темы
+  Bot -> Server: suggest_topic(telegram_id, name)
+  Server -> DB: INSERT INTO SuggestedTopics
+  Server -> Admin: Уведомление о новой теме
+  Bot -> Пользователь: "Тема на модерации"
+end
+
+' ===== Группа контента =====
+group US-020: Выбор формата материала
+  Пользователь -> Bot: Выбирает тему
+  Bot -> Server: get_content_formats(topic_id)
+  Server -> DB: SELECT type FROM Content\nWHERE topic_id=?
+  DB --> Server: Доступные форматы
+  Server --> Bot: Список форматов
+  Bot -> Пользователь: Кнопки (Видео/Аудио/Текст)
+
+  Пользователь -> Bot: Выбирает "Видео"
+  Bot -> Server: get_content(topic_id, 'video')
+  Server -> API: Запрос видеоресурсов
+  API --> Server: Ссылки на видео
+  Server --> Bot: Форматированный контент
+  Bot -> Пользователь: Отправка видео + описание
+end
+
+' ===== Группа тестирования =====
+group US-030: Прохождение теста
+  Пользователь -> Bot: /start_test
+  Bot -> Server: generate_test(topic_id, format)
+  Server -> DB: SELECT * FROM Tests
+  DB --> Server: Вопросы теста
+  Server --> Bot: Сформированный тест
+  loop Для каждого вопроса
+    Bot -> Пользователь: Вопрос + варианты
+    Пользователь -> Bot: Ответ
+    Bot -> Server: check_answer(question_id, answer)
+    Server -> DB: Проверка ответа
+    DB --> Server: Результат (правильно/нет)
+    Server -> DB: Сохранить результат
+  end
+  Server --> Bot: Итоговый счет
+  Bot -> Пользователь: Результат + начисленные очки
+end
+
+group US-031: История тестов
+  Пользователь -> Bot: /my_stats
+  Bot -> Server: get_user_stats(telegram_id)
+  Server -> DB: SELECT * FROM User_Test_Results\nWHERE user_id=?
+  DB --> Server: Данные за 30 дней
+  Server -> API: Запрос на генерацию графика
+  API --> Server: PNG график прогресса
+  Server --> Bot: График + аналитика
+  Bot -> Пользователь: Отправка статистики
+end
+
+' ===== Группа рейтингов =====
+group US-040: Глобальный рейтинг
+  Пользователь -> Bot: /leaderboard
+  Bot -> Server: get_leaderboard()
+  Server -> DB: SELECT username, rating FROM Users\nORDER BY rating DESC LIMIT 10
+  DB --> Server: Топ-10 пользователей
+  Server --> Bot: Форматированный список
+  Bot -> Пользователь: Красивое отображение топа
+end
+
+group US-041: Альфа-доступ
+  Пользователь -> Bot: /alpha_feed
+  Bot -> Server: check_alpha_access(telegram_id)
+  Server -> DB: SELECT rating FROM Users\nWHERE telegram_id=?
+  DB --> Server: Текущий рейтинг
+  alt Рейтинг >= 5000
+    Server -> DB: SELECT * FROM AlphaContent
+    DB --> Server: Эксклюзивные материалы
+    Server --> Bot: Спецконтент
+    Bot -> Пользователь: Показ альфа-материалов + badge
+  else Рейтинг < 5000
+    Server --> Bot: Отказ в доступе
+    Bot -> Пользователь: "Недостаточно очков (нужно 5000)"
+  end
+end
+
+' ===== Администрирование =====
+group US-050: Уведомления админа
+  Пользователь -> Bot: Регистрация
+  Bot -> Server: register_user(...)
+  Server -> DB: (сохранение)
+  Server -> Admin: "Новый пользователь:\nUsername: {username}\nДата: {date}"
+end
+
+@enduml
