@@ -9,6 +9,10 @@ management:
         enabled: true
 debug: true
 
+telegram:
+  botName: "RootsUp"
+  token: "7899346717:AAFjAuUCUSLOGESWqRlnPs32uAgpekH3LFs"
+
 spring:
   application:
     name: Kotlin_school_project
