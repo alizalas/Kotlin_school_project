@@ -150,5 +150,8 @@ CREATE TABLE users_authorization (
     full_name VARCHAR(255),
     profile_data JSONB
 );
-
+```
+## Ссылка на бота
+```
+@RootsUp_bot
 ```
