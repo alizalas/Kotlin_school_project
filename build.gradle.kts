@@ -34,7 +34,8 @@ dependencies {
     implementation("org.telegram:telegrambots-spring-boot-starter:6.9.7.1")
     implementation("org.telegram:telegrambots-abilities:6.7.0")
     implementation("org.telegram:telegrambotsextensions:6.9.7.1")
-    implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
+    implementation("com.squareup.okhttp3:okhttp:4.10.0")
+    implementation("com.fasterxml.jackson.module:jackson-module-kotlin:2.15.0")
 
     implementation("org.jetbrains.kotlinx:kotlinx-coroutines-core:1.7.3")
     runtimeOnly("org.postgresql:postgresql")
